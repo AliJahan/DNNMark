@@ -1,0 +1,16 @@
+[DNNMark]
+run_mode=standalone
+
+[Convolution]
+name=conv1
+n=100
+c=3
+h=32
+w=32
+previous_layer=null
+conv_mode=convolution
+num_output=64
+kernel_size=3
+pad=1
+stride=1
+algo=5
