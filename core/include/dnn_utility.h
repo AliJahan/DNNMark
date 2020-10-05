@@ -606,6 +606,12 @@ class ConvAlgo {
       fwd_algo_ = CUDNN_CONVOLUTION_FWD_ALGO_FFT;
     } else if (!algo.compare("winograd")) {
       fwd_algo_ = CUDNN_CONVOLUTION_FWD_ALGO_WINOGRAD;
+    } else if (!algo.compare("convolution")) {
+      fwd_algo_ = CUDNN_CONVOLUTION_FWD_ALGO_DIRECT;
+    } else if (!algo.compare("gemm")) {
+      fwd_algo_ = CUDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_GEMM;
+    } else {
+      std::cout<< "No valid fwd algo for convolution layer specified, default used\n";
     }
   }
   void SetFwdAlgo(cudnnConvolutionFwdAlgo_t fwd_algo) {
@@ -928,8 +934,8 @@ class ConvAlgo {
   void SetFwdAlgo(miopenConvFwdAlgorithm_t fwd_algo) {
     fwd_algo_ = fwd_algo;
   }
-  void SetFwdAlgo(std::string algo) {
-  }
+  // void SetFwdAlgo(std::string algo) {
+  // }
   void FindFwdAlgo(const Handle &handle, RunMode mode, int idx,
                    const DataTensor<T> &bottom_desc,
                    const ConvolutionDesc<T> &conv_desc,
