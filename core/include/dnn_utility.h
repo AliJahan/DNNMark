@@ -610,8 +610,6 @@ class ConvAlgo {
       fwd_algo_ = CUDNN_CONVOLUTION_FWD_ALGO_DIRECT;
     } else if (!algo.compare("gemm")) {
       fwd_algo_ = CUDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_GEMM;
-    } else {
-      std::cout<< "No valid fwd algo for convolution layer specified, default used\n";
     }
   }
   void SetFwdAlgo(cudnnConvolutionFwdAlgo_t fwd_algo) {
@@ -934,8 +932,8 @@ class ConvAlgo {
   void SetFwdAlgo(miopenConvFwdAlgorithm_t fwd_algo) {
     fwd_algo_ = fwd_algo;
   }
-  // void SetFwdAlgo(std::string algo) {
-  // }
+  void SetFwdAlgo(std::string algo) {
+  }
   void FindFwdAlgo(const Handle &handle, RunMode mode, int idx,
                    const DataTensor<T> &bottom_desc,
                    const ConvolutionDesc<T> &conv_desc,
@@ -1083,7 +1081,7 @@ class ConvAlgo {
 inline void ProfilerStart(const Handle &handle, RunMode mode, int idx,
                           Timer *timer, const std::string &layer) {
 #ifdef NVIDIA_CUDNN
-  cudaProfilerStart();
+  //cudaProfilerStart();
 #endif
 #ifdef AMD_MIOPEN
   miopenEnableProfiling(mode == COMPOSED ?
@@ -1094,7 +1092,7 @@ inline void ProfilerStart(const Handle &handle, RunMode mode, int idx,
 inline void ProfilerStop(const Handle &handle, RunMode mode, int idx,
                          Timer *timer, const std::string &layer) {
 #ifdef NVIDIA_CUDNN
-  cudaProfilerStop();
+  //cudaProfilerStop();
   CUDA_CALL(cudaDeviceSynchronize());
 #endif
 #ifdef AMD_MIOPEN

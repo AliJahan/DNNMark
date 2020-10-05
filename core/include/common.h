@@ -27,7 +27,7 @@
 
 #ifdef NVIDIA_CUDNN
 #include <cuda.h>
-#include <cuda_profiler_api.h>
+//#include <cuda_profiler_api.h>
 #include <curand.h>
 #include <cudnn.h>
 #include <cublas_v2.h>

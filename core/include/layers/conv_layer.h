@@ -167,6 +167,7 @@ class ConvolutionLayer : public Layer<T> {
 
     // Set convolution forward algorithm
     // Use default algorithm for now
+    printf("\n\n@@!@@%s\n\n",conv_param_.algo_.c_str());
     conv_algo_.SetFwdAlgo(conv_param_.algo_);
 
     // Allocate workspace
