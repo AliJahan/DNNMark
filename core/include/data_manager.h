@@ -37,11 +37,12 @@ class Data {
  private:
   PseudoNumGenerator *png_;
   size_t size_;
+  int chunk_num_
   T *gpu_ptr_;
  public:
-  Data(size_t size)
-  : size_(size) {
-    LOG(INFO) << "Create Data chunk of size " << size_;
+  Data(size_t size, int chunk_num)
+  : size_(size), chunk_num_(chunk_num) {
+    LOG(INFO) << "Create Data chunk of size " << size_ << " chunk num: " << chunk_num_;
 #ifdef NVIDIA_CUDNN
     CUDA_CALL(cudaMalloc(&gpu_ptr_, size * sizeof(T)));
 #endif
@@ -61,8 +62,36 @@ class Data {
     }
   }
   void Filler() {
-    png_ = PseudoNumGenerator::GetInstance();
-    png_->GenerateUniformData(gpu_ptr_, size_);
+    //<AliJahan/> 
+    //Check if the weights are already generated and saved
+    ifstream f("wights_"+string_to(chunk_num_));
+    if(f.good()){//Exist => load them in gpu_ptr_
+      LOG(INFO) << "Data found on disk, loading from: wights_" << chunk_num_ ;
+      T *cpu_ptr = new T[size_]
+      for(int i = 0; i < size_; i++){
+        f >> cpu_ptr[i];
+      }
+      f.close()
+      cudaMemcpy(gpu_ptr_,cpu_ptr,size_*sizeof(T),cudaMemcpyHostToDevice);
+      delete cpu_ptr;
+      LOG(INFO) << "Loading finished, coppied to the device";
+    }
+    else{
+      LOG(INFO) << "No data on disk, generating random numbers on GPU";
+      png_ = PseudoNumGenerator::GetInstance();
+      png_->GenerateUniformData(gpu_ptr_, size_);
+
+      LOG(INFO) << "Generation done, saving on disk in file: wieght_" << chunk_num_;
+      T *cpu_ptr = new T[size_];
+      cudaMemcpy(cpu_ptr,gpu_ptr_,size_*sizeof(T),cudaMemcpyDeviceToHost);
+      ofstream f("wights_"+string_to(chunk_num_));
+      for(int i = 0; i < size_; i++){
+        f << cpu_ptr[i];
+      }
+      f.close();
+      LOG(INFO) << "saved on disk";
+    }
+    //</AliJahan>
   }
   T *Get() { return gpu_ptr_; }
 };
@@ -97,7 +126,7 @@ class DataManager {
   int CreateData(size_t size) {
     int gen_chunk_id = num_data_chunks_;
     num_data_chunks_++;
-    gpu_data_pool_.emplace(gen_chunk_id, std::make_shared<Data<T>>(size));
+    gpu_data_pool_.emplace(gen_chunk_id, std::make_shared<Data<T>>(size, gen_chunk_id));
     LOG(INFO) << "Create data with ID: " << gen_chunk_id;
     return gen_chunk_id;
   }

@@ -167,11 +167,7 @@ class ConvolutionLayer : public Layer<T> {
 
     // Set convolution forward algorithm
     // Use default algorithm for now
-    // conv_algo_.SetFwdAlgo("fft");
-    // conv_algo_.SetFwdAlgo("fft2");
-    // conv_algo_.SetFwdAlgo("winograd");
-    conv_algo_.SetFwdAlgo("gemm");
-    // std::cout <<"@@!@@:" << conv_algo_.GetFwdAlgo() <<std::endl;
+    conv_algo_.SetFwdAlgo(conv_param_.algo_);
 
     // Allocate workspace
     conv_algo_.GetFwdWorkspaceSize(*(p_dnnmark_->GetHandle()),
@@ -185,7 +181,6 @@ class ConvolutionLayer : public Layer<T> {
       fwd_workspace_ = data_manager_->GetData(fwd_workspace_id_);
       has_fwd_workspace_ = true;
     }
-    // std::cout <<"@@!@@:" << conv_algo_.GetFwdAlgo() <<std::endl;
 
 #ifdef NVIDIA_CUDNN
     // Set convolution backward filter/weights algorithm
