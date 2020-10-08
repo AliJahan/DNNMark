@@ -606,8 +606,10 @@ class ConvAlgo {
       fwd_algo_ = CUDNN_CONVOLUTION_FWD_ALGO_FFT;
     } else if (!algo.compare("winograd")) {
       fwd_algo_ = CUDNN_CONVOLUTION_FWD_ALGO_WINOGRAD;
-    } else if (!algo.compare("convolution")) {
-      fwd_algo_ = CUDNN_CONVOLUTION_FWD_ALGO_DIRECT;
+    // } else if (!algo.compare("convolution")) {
+      // fwd_algo_ = CUDNN_CONVOLUTION_FWD_ALGO_DIRECT;
+    } else if (!algo.compare("fft2")) {
+      fwd_algo_ = CUDNN_CONVOLUTION_FWD_ALGO_FFT_TILING;
     } else if (!algo.compare("gemm")) {
       fwd_algo_ = CUDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_GEMM;
     }

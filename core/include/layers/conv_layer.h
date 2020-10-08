@@ -167,7 +167,10 @@ class ConvolutionLayer : public Layer<T> {
 
     // Set convolution forward algorithm
     // Use default algorithm for now
-    conv_algo_.SetFwdAlgo("winograd");
+    // conv_algo_.SetFwdAlgo("fft");
+    // conv_algo_.SetFwdAlgo("fft2");
+    // conv_algo_.SetFwdAlgo("winograd");
+    conv_algo_.SetFwdAlgo("gemm");
     // std::cout <<"@@!@@:" << conv_algo_.GetFwdAlgo() <<std::endl;
 
     // Allocate workspace

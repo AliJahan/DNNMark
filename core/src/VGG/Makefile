@@ -200,7 +200,7 @@ endif
 # Target rules
 all: build
 
-build: test
+build: vgg
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -211,7 +211,7 @@ endif
 
 OBJ =  test_VGG.o dnnmark.o data_png.o dnn_config_keywords.o dnn_utility.o gemm_wrapper.o utility.o common.o 
 
-test: $(OBJ)
+vgg: $(OBJ)
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 
 %.o: %.cc
