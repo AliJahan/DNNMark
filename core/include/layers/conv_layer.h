@@ -167,7 +167,8 @@ class ConvolutionLayer : public Layer<T> {
 
     // Set convolution forward algorithm
     // Use default algorithm for now
-    conv_algo_.SetFwdAlgo(conv_param_.algo_);
+    //conv_algo_.SetFwdAlgo(conv_param_.algo_);
+    conv_algo_.SetFwdAlgo("winograd");
 
     // Allocate workspace
     conv_algo_.GetFwdWorkspaceSize(*(p_dnnmark_->GetHandle()),

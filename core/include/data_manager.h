@@ -25,6 +25,7 @@
 
 #include <memory>
 #include <map>
+#include <fstream> //<AliJahan/>
 #include <glog/logging.h>
 
 #include "common.h"
@@ -37,7 +38,7 @@ class Data {
  private:
   PseudoNumGenerator *png_;
   size_t size_;
-  int chunk_num_
+  int chunk_num_;
   T *gpu_ptr_;
  public:
   Data(size_t size, int chunk_num)
@@ -64,14 +65,14 @@ class Data {
   void Filler() {
     //<AliJahan/> 
     //Check if the weights are already generated and saved
-    ifstream f("wights_"+string_to(chunk_num_));
+    std::ifstream f("weights_"+std::to_string(chunk_num_));
     if(f.good()){//Exist => load them in gpu_ptr_
-      LOG(INFO) << "Data found on disk, loading from: wights_" << chunk_num_ ;
-      T *cpu_ptr = new T[size_]
+      LOG(INFO) << "Data found on disk, loading from: weight_" << chunk_num_ ;
+      T *cpu_ptr = new T[size_];
       for(int i = 0; i < size_; i++){
         f >> cpu_ptr[i];
       }
-      f.close()
+      f.close();
       cudaMemcpy(gpu_ptr_,cpu_ptr,size_*sizeof(T),cudaMemcpyHostToDevice);
       delete cpu_ptr;
       LOG(INFO) << "Loading finished, coppied to the device";
@@ -80,15 +81,15 @@ class Data {
       LOG(INFO) << "No data on disk, generating random numbers on GPU";
       png_ = PseudoNumGenerator::GetInstance();
       png_->GenerateUniformData(gpu_ptr_, size_);
-
-      LOG(INFO) << "Generation done, saving on disk in file: wieght_" << chunk_num_;
+      LOG(INFO) << "Generation done, saving on disk in file: weight_" << chunk_num_;
       T *cpu_ptr = new T[size_];
       cudaMemcpy(cpu_ptr,gpu_ptr_,size_*sizeof(T),cudaMemcpyDeviceToHost);
-      ofstream f("wights_"+string_to(chunk_num_));
+      std::ofstream f("weights_"+std::to_string(chunk_num_));
       for(int i = 0; i < size_; i++){
         f << cpu_ptr[i];
       }
       f.close();
+      delete cpu_ptr;
       LOG(INFO) << "saved on disk";
     }
     //</AliJahan>
